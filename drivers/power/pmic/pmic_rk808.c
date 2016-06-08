@@ -87,6 +87,23 @@ static struct fdt_regulator_match rk808_reg_matches[] = {
 	{ .prop = "rk_ldo10",},
 };
 
+static struct fdt_regulator_match rk808_reg1_matches[] = {
+	{ .prop = "DCDC_REG1",},
+	{ .prop = "DCDC_REG2",},
+	{ .prop = "DCDC_REG3",},
+	{ .prop = "DCDC_REG4",},
+	{ .prop = "LDO_REG1", },
+	{ .prop = "LDO_REG2", },
+	{ .prop = "LDO_REG3", },
+	{ .prop = "LDO_REG4", },
+	{ .prop = "LDO_REG5", },
+	{ .prop = "LDO_REG6", },
+	{ .prop = "LDO_REG7", },
+	{ .prop = "LDO_REG8", },
+	{ .prop = "SWITCH_REG1",},
+	{ .prop = "SWITCH_REG2",},
+};
+
 #if 0
 /*
 for chack charger status in boot
@@ -287,8 +304,12 @@ static int rk808_set_regulator_init(struct fdt_regulator_match *matches, int num
 {
 	int ret;
 
-	ret = rk808_regulator_set_voltage(num_matches, matches->min_uV, matches->max_uV);
-	ret = rk808_regulator_enable(num_matches);
+	if (matches->min_uV == matches->max_uV)
+		ret = rk808_regulator_set_voltage(num_matches, matches->min_uV,
+						  matches->max_uV);
+	if (matches->boot_on)
+		ret = rk808_regulator_enable(num_matches);
+
 	return ret;
 }
 
@@ -297,8 +318,10 @@ static int rk808_parse_dt(const void* blob)
 	int node, nd;
 	struct fdt_gpio_state gpios[2];
 	u32 bus, addr;
-	int ret;
-	int i;
+	int ret, i;
+	struct fdt_regulator_match *reg_match = NULL;
+	const char *prop;
+	int temp_node;
 	
 	node = fdt_node_offset_by_compatible(blob,
 					g_i2c_node, COMPAT_ROCKCHIP_RK808);
@@ -325,16 +348,31 @@ static int rk808_parse_dt(const void* blob)
 	}
 	
 	nd = fdt_get_regulator_node(blob, node);
-	if (nd < 0)
+	if (nd < 0) {
 		printf("%s: Cannot find regulators\n", __func__);
-	else
-		fdt_regulator_match(blob, nd, rk808_reg_matches,
-					RK808_NUM_REGULATORS);
+	} else {
+		fdt_for_each_subnode(blob, temp_node, nd) {
+			prop = fdt_getprop(blob, temp_node,
+					   "regulator-compatible", NULL);
+			if (prop)
+				break;
+		}
+
+		if (prop)
+			reg_match = rk808_reg_matches;
+		else
+			reg_match = rk808_reg1_matches;
+
+		fdt_regulator_match(blob, nd, reg_match,
+				    RK808_NUM_REGULATORS);
+	}
 
 	for (i = 0; i < RK808_NUM_REGULATORS; i++) {
-		regulator_init_pmic_matches[i].name = rk808_reg_matches[i].name;
-		if (rk808_reg_matches[i].boot_on && (rk808_reg_matches[i].min_uV == rk808_reg_matches[i].max_uV))
-			ret = rk808_set_regulator_init(&rk808_reg_matches[i], i);
+		regulator_init_pmic_matches[i].name = reg_match[i].name;
+		if (reg_match[i].boot_on ||
+		    (reg_match[i].min_uV ==
+		    reg_match[i].max_uV))
+			ret = rk808_set_regulator_init(&reg_match[i], i);
 	}
 
 	fdtdec_decode_gpios(blob, node, "gpios", gpios, 2);
@@ -369,9 +407,6 @@ int pmic_rk808_init(unsigned char bus)
 	charger_init(0);
 	i2c_init(RK808_I2C_SPEED, rk808.pmic->hw.i2c.addr);
 	i2c_set_bus_speed(RK808_I2C_SPEED);
-	i2c_reg_write(0x1b,0x23,i2c_reg_read(0x1b,0x23)|0x60);
-	i2c_reg_write(0x1b,0x45,0x02);
-	i2c_reg_write(0x1b,0x24,i2c_reg_read(0x1b,0x24)|0x28);
 
     return 0;
 }

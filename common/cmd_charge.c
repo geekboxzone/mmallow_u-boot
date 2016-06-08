@@ -100,6 +100,18 @@ int get_battery_capacity(void) {
 	return batt_status.capacity;
 }
 
+static int wfi_pwrkey_pressed = 0;
+
+void rkkey_set_wfi_pwrkey_state(int pressed)
+{
+	wfi_pwrkey_pressed = pressed;
+}
+
+int rkkey_get_wfi_pwrkey_state(void)
+{
+	return wfi_pwrkey_pressed;
+}
+
 /**
  * check power key pressed state.
  */
@@ -116,8 +128,13 @@ int power_key_pressed(void) {
 	return KEY_NOT_PRESSED;
 #else
 	static unsigned int power_pressed_time = 0;
+#ifdef CONFIG_CHARGE_DEEP_SLEEP
+	int power_pressed = rkkey_power_state() | rkkey_get_wfi_pwrkey_state();
+#else
 	int power_pressed = rkkey_power_state();
+#endif
 	int power_pressed_state = KEY_NOT_PRESSED;
+
 	if (!power_pressed_time) {
 		//haven't pressed before.
 		if (power_pressed) {
@@ -701,15 +718,12 @@ int do_charge(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 			LOGD("key pressed state:%d", key_state);
 		}
 		if (key_state == KEY_SHORT_PRESSED) {
-
-#ifdef CONFIG_CHARGE_DEEP_SLEEP
-
-	        if(batt_status.capacity>BRIGHT_MAXLOW_BATTERY_CAPACITY)
-				brightness = IS_BRIGHT(brightness)? SCREEN_OFF : SCREEN_BRIGHT;
+			if (batt_status.capacity > BRIGHT_MAXLOW_BATTERY_CAPACITY)
+				brightness = IS_BRIGHT(brightness) ?
+						SCREEN_OFF : SCREEN_BRIGHT;
 			else
-				brightness = IS_BRIGHT(brightness)? SCREEN_OFF:  SCREEN_DIM;
-
-#endif
+				brightness = IS_BRIGHT(brightness) ?
+						SCREEN_OFF : SCREEN_DIM;
 		} else if(key_state == KEY_LONG_PRESSED){
 			//long pressed key, continue bootting.
 			if (handle_exit_charge() < 0) {

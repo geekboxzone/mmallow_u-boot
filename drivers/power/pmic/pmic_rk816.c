@@ -49,16 +49,16 @@ static int rk816_ldo_set_vol_base_addr[] = {
 #define rk816_LDO_SET_VOL_REG(x) (rk816_ldo_set_vol_base_addr[x - 4])
 
 static struct fdt_regulator_match rk816_reg_matches[] = {
-	{ .prop = "rk816_dcdc1",},
-	{ .prop = "rk816_dcdc2",},
-	{ .prop = "rk816_dcdc3",},
-	{ .prop = "rk816_dcdc4",},
-	{ .prop = "rk816_ldo1", },
-	{ .prop = "rk816_ldo2", },
-	{ .prop = "rk816_ldo3", },
-	{ .prop = "rk816_ldo4", },
-	{ .prop = "rk816_ldo5", },
-	{ .prop = "rk816_ldo6", },
+	{ .prop = "RK816_DCDC1",},
+	{ .prop = "RK816_DCDC2",},
+	{ .prop = "RK816_DCDC3",},
+	{ .prop = "RK816_DCDC4",},
+	{ .prop = "RK816_LDO1", },
+	{ .prop = "RK816_LDO2", },
+	{ .prop = "RK816_LDO3", },
+	{ .prop = "RK816_LDO4", },
+	{ .prop = "RK816_LDO5", },
+	{ .prop = "RK816_LDO6", },
 };
 
 static struct fdt_regulator_match rk816_reg1_matches[] = {
@@ -264,20 +264,20 @@ static int rk816_parse_dt(const void *blob)
 		return -ENODEV;
 	} else {
 		fdt_for_each_subnode(blob, temp_node, nd) {
-		prop = fdt_getprop(blob, temp_node,
-				   "regulator-compatible",
-				   NULL);
+			prop = fdt_getprop(blob, temp_node,
+					   "regulator-compatible",
+					   NULL);
+			if (prop)
+				break;
+		}
+
 		if (prop)
-			break;
-	}
+			reg_match = rk816_reg_matches;
+		else
+			reg_match = rk816_reg1_matches;
 
-	if (prop)
-		reg_match = rk816_reg_matches;
-	else
-		reg_match = rk816_reg1_matches;
-
-	fdt_regulator_match(blob, nd, reg_match,
-			    RK816_NUM_REGULATORS);
+		fdt_regulator_match(blob, nd, reg_match,
+				    RK816_NUM_REGULATORS);
 	}
 
 	for (i = 0; i < RK816_NUM_REGULATORS; i++) {
@@ -342,5 +342,28 @@ void pmic_rk816_shut_down(void)
 	reg = i2c_reg_read(rk816.pmic->hw.i2c.addr, RK816_DEV_CTRL_REG);
 	i2c_reg_write(rk816.pmic->hw.i2c.addr, RK816_DEV_CTRL_REG,
 		      (reg | (0x1 << 0)));
+}
+
+int pmic_rk816_poll_pwrkey_stat(void)
+{
+	u8 buf;
+
+	i2c_set_bus_num(rk816.pmic->bus);
+	i2c_init(RK816_I2C_SPEED, rk816.pmic->hw.i2c.addr);
+	i2c_set_bus_speed(RK816_I2C_SPEED);
+
+	buf = i2c_reg_read(rk816.pmic->hw.i2c.addr, RK816_INT_STS_REG1);
+	/* rising, clear falling */
+	if (buf & (1 << 6))
+		i2c_reg_write(rk816.pmic->hw.i2c.addr,
+			      RK816_INT_STS_REG1, (1 << 5));
+	/* falling, clear rising */
+	if (buf & (1 << 5))
+		i2c_reg_write(rk816.pmic->hw.i2c.addr,
+			      RK816_INT_STS_REG1, (1 << 6));
+
+	buf = i2c_reg_read(rk816.pmic->hw.i2c.addr, RK816_INT_STS_REG1);
+
+	return (buf & (1 << 5));
 }
 
