@@ -250,6 +250,7 @@ enum fbt_reboot_type {
 	FASTBOOT_REBOOT_NORECOVER,		/* do not enter recover */
 	FASTBOOT_REBOOT_FASTBOOT,		/* android fastboot */
 	FASTBOOT_REBOOT_CHARGE,			/* charge */
+	FASTBOOT_REBOOT_RAMFS,
 };
 
 

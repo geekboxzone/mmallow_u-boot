@@ -142,6 +142,9 @@ enum fbt_reboot_type board_fbt_get_reboot_type(void)
 			printf("reboot charge.\n");
 			frt = FASTBOOT_REBOOT_CHARGE;
 			break;
+		case BOOT_RAMFS:
+			frt = FASTBOOT_REBOOT_RAMFS;
+			break;
 		default:
 			printf("unsupport reboot type %d\n", reboot_mode);
 			break;
@@ -543,6 +546,12 @@ void board_fbt_preboot(void)
 		board_fbt_request_start_fastboot();
 	}
 #endif
+	else if (frt == FASTBOOT_REBOOT_RAMFS) {
+#ifdef CONFIG_CMD_BOOTRK
+		char *const boot_cmd[] = {"bootrk", "ramfs"};
+		do_bootrk(NULL, 0, ARRAY_SIZE(boot_cmd), boot_cmd);
+#endif
+	}
 	else {
 		FBTDBG("\n%s: check misc command.\n", __func__);
 		/* unknown reboot cause (typically because of a cold boot).
