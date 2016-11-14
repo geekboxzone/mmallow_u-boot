@@ -152,223 +152,26 @@ static struct rkxx_remotectl_drvdata *ddata = NULL;
 
 
 
-static struct rkxx_remote_key_table remote_key_table_meiyu_4040[] = {
-	{0xf2, KEY_REPLY},
-	{0xba, KEY_BACK},
-	{0xf4, KEY_UP},
-	{0xf1, KEY_DOWN},
-	{0xef, KEY_LEFT},
-	{0xee, KEY_RIGHT},
-	{0xbd, KEY_HOME},
-	{0xea, KEY_VOLUMEUP},
-	{0xe3, KEY_VOLUMEDOWN},
-	{0xe2, KEY_SEARCH},
-	{0xb2, KEY_POWER},
-	{0xbc, KEY_MUTE},
+static struct rkxx_remote_key_table remote_key_table_geekbox_ff00[] = {
+	{0xeb, KEY_POWER},
 	{0xec, KEY_MENU},
-/*lay pause*/
-	{0xbf, 0x190},
-/*pre*/
-	{0xe0, 0x191},
-/*next*/
-	{0xe1, 0x192},
-/*pic,rorate left*/
-	{0xe9, 183},
-/*rorate right*/
-	{0xe6, 248},
-/*zoom out*/
-	{0xe8, 185},
-/*zoom in*/
-	{0xe7, 186},
-/*mouse switch*/
-	{0xb8, 388},
-/*zoom outdisplay switch*/
-	{0xbe, 0x175},
+	{0xfc, KEY_UP},
+	{0xfd, KEY_LEFT},
+	{0xf1, KEY_REPLY},
+	{0xe5, KEY_RIGHT},
+	{0xf8, KEY_DOWN},
+	{0xa7, KEY_VOLUMEDOWN},
+	{0xa3, 388},
+	{0xf4, KEY_VOLUMEUP},
+	{0xfe, KEY_BACK},
+	{0xb7, KEY_HOME},
 };
-
-
-static struct rkxx_remote_key_table remote_key_table_sunchip_ff00[] = {
-	{0xf9, KEY_HOME},
-	{0xbf, KEY_BACK},
-	{0xfb, KEY_MENU},
-	{0xaa, KEY_REPLY},
-	{0xb9, KEY_UP},
-	{0xe9, KEY_DOWN},
-	{0xb8, KEY_LEFT},
-	{0xea, KEY_RIGHT},
-	{0xeb, KEY_VOLUMEDOWN},
-	{0xef, KEY_VOLUMEUP},
-	{0xf7, KEY_MUTE},
-	{0xe7, KEY_POWER},
-	{0xfc, KEY_POWER},
-	{0x63, KEY_POWER}, 
-	{0xa9, KEY_VOLUMEDOWN},
-	{0xa8, KEY_VOLUMEDOWN},
-	{0xe0, KEY_VOLUMEDOWN},
-	{0xa5, KEY_VOLUMEDOWN},
-	{0xab, 183},
-	{0xb7, 388},
-	{0xf8, 184},
-	{0xaf, 185},
-	{0xed, KEY_VOLUMEDOWN},
-	{0xee, 186},
-	{0xb3, KEY_VOLUMEDOWN},
-	{0xf1, KEY_VOLUMEDOWN},
-	{0xf2, KEY_VOLUMEDOWN},
-	{0xf3, KEY_SEARCH},
-	{0xb4, KEY_VOLUMEDOWN},
-	{0xbe, KEY_SEARCH},
-};
-
-//########################################
-
-static struct rkxx_remote_key_table remote_key_table_meiyu_202[] = {
-	{0xf2, KEY_REPLY},//ok = DPAD CENTER
-	{0xba, KEY_BACK}, 
-	{0xf4, KEY_UP},
-	{0xf1, KEY_DOWN},
-	{0xef, KEY_LEFT},
-	{0xee, KEY_RIGHT}, ////////
-	{0xbd, KEY_HOME}, //home
-	{0xea, KEY_VOLUMEUP},
-	{0xe3, KEY_VOLUMEDOWN},
-	{0xb8, KEY_SEARCH}, //search
-	{0xb2, KEY_POWER}, //power off
-	{0xbc, KEY_MUTE}, //mute
-	{0xec, KEY_MENU},
-
-//media ctrl
-	{0xe1, 0x190}, //play pause
-	{0xe0, 0x191}, //pre
-	{0xbf, 0x192}, //next
-
-//pic
-	{0xe2, 183}, //rorate left
-	{0xe5, 184}, //rorate right
-	{0xe9, 185}, //zoom out
-	{0xe6, 186}, //zoom in
-//mouse switch
-	{0xf0,388},
-//display switch
-	{0xbe, 0x175},
-};
-
-static struct rkxx_remote_key_table remote_key_table_df[] = {
-	{0xe0, KEY_REPLY},
-	{0xfc, KEY_BACK}, 
-	{0xf0, KEY_UP},
-	{0xe4, KEY_DOWN},
-	{0xf4, KEY_LEFT},
-	{0xe8,KEY_RIGHT}, ////////
-	{0xf6, KEY_VOLUMEDOWN},
-	{0xf9, KEY_VOLUMEUP},
-	{0xfe, KEY_HOME}, //home
-	{0xf8, 183}, //rorate left
-	{0xf7, 184}, //rorate right
-	{0xfb, 185}, //zoom out
-	{0xfa, 186}, //zoom in
-	{0xf1, KEY_MUTE}, //mute
-	{0xf5, KEY_POWER}, //power off
-	{0xfd, KEY_SEARCH}, //search
-};
-
-static struct rkxx_remote_key_table remote_key_table_4db2[] = {
-	{0x23, KEY_POWER},
-	{0x77, KEY_HOME},
-	{0x7d, KEY_SEARCH},
-
-	{0x35, KEY_UP},
-	{0x2d, KEY_DOWN},
-	{0x66, KEY_LEFT},
-	{0x3e, KEY_RIGHT},
-	{0x31, KEY_REPLY},
-	{0x3a, KEY_BACK},
-	{0x65, KEY_MENU},
-
-	{0x7e, KEY_VOLUMEDOWN},
-	{0x7f, KEY_VOLUMEUP},
-
-	{0x6d, KEY_1},
-	{0x6c, KEY_2},
-	{0x33, KEY_3},
-	{0x71, KEY_4},
-	{0x70, KEY_5},
-
-	{0x37, KEY_6},
-	{0x75, KEY_7},
-	{0x74, KEY_8},
-	{0x3b, KEY_9},
-	{0x78, KEY_0},
-
-	{0x25, KEY_MINUS}, //KEY_NUMERIC_STAR
-	{0x2f, KEY_EQUAL}, //KEY_NUMERIC_POUND
-};
-
-static struct rkxx_remote_key_table remote_key_table_ff[] = {
-	{0xe7, KEY_POWER},
-	{0xf9, KEY_HOME},
-	{0xa4, KEY_SEARCH},
-
-	{0xb9, KEY_UP},
-	{0xe9, KEY_DOWN},
-	{0xb8, KEY_LEFT},
-	{0xea, KEY_RIGHT},
-	{0xaa, KEY_REPLY},
-	{0xbf, KEY_BACK},
-	{0xfb, KEY_MENU},
-
-	{0xeb, KEY_VOLUMEDOWN},
-	{0xf7, KEY_MUTE},
-	{0xef, KEY_VOLUMEUP},
-
-	{0xab, KEY_1},
-	{0xb7, KEY_2},
-	{0xf8, KEY_3},
-	{0xaf, KEY_4},
-	{0xed, KEY_5},
-
-	{0xee, KEY_6},
-	{0xb3, KEY_7},
-	{0xf1, KEY_8},
-	{0xf2, KEY_9},
-	{0xf3, KEY_0},
-
-	{0xbe, KEY_MINUS}, //KEY_NUMERIC_STAR
-	{0xb4, KEY_EQUAL}, //KEY_NUMERIC_POUND
-};
-
-
 
 static struct rkxx_remotectl_button remotectl_button[] = {
 	{
 		.usercode = 0xff00,
 		.nbuttons =  29,
-		.key_table = &remote_key_table_sunchip_ff00[0],
-	},
-	{
-		.usercode = 0x4040,
-		.nbuttons =  22,
-		.key_table = &remote_key_table_meiyu_4040[0],
-	},	
-	{
-		.usercode = 0x202,
-		.nbuttons =  22,
-		.key_table = &remote_key_table_meiyu_202[0],
-	},
-	{
-		.usercode = 0xdf,
-		.nbuttons =  16,
-		.key_table = &remote_key_table_df[0],
-	},
-	{
-		.usercode = 0x4db2,
-		.nbuttons =  24,
-		.key_table = &remote_key_table_4db2[0],
-	},
-	{
-		.usercode = 0xff,
-		.nbuttons =  25,
-		.key_table = &remote_key_table_ff[0],
+		.key_table = &remote_key_table_geekbox_ff00[0],
 	},
 };
 
